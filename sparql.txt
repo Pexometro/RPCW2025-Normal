@@ -1,0 +1,238 @@
+Pergunta 12
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.example.org/sapientia#>
+
+SELECT ?nomeConceito WHERE {
+  :Platão a :Mestre ;
+          :ensina ?disciplina .
+  ?conceito :éEstudadoEm ?disciplina ;
+            :temNome ?nomeConceito .
+}
+
+
+Pergunta 13
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.example.org/sapientia#>
+
+SELECT ?tituloObra WHERE {
+  ?obra a :Obra ;
+        :temTitulo ?tituloObra ;
+        :explica ?conceito .
+  ?conceito :temNome "Relatividade" .
+}
+
+Pergunta 14 - Ciencias Sociais aparece em sapientia_ind.ttl, porém não estava a ser importada para o Sparql, por isso a query devolve vazio.
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.example.org/sapientia#>
+
+SELECT ?disciplinaNome WHERE {
+  ?conceito :temNome "Ciencias Sociais" ;
+            :éEstudadoEm ?disciplina .
+  ?disciplina :temNome ?disciplinaNome .
+}
+
+Pergunta 15 - Logica Formal aparece em sapientia_ind.ttl, porém não estava a ser importada para o Sparql, por isso a query devolve vazio.
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.example.org/sapientia#>
+
+SELECT ?aplicacaoNome WHERE {
+  ?conceito :temNome "Logica Formal" ;
+            :temAplicacaoEm ?aplicacao .
+  ?aplicacao :temNome ?aplicacaoNome .
+}
+
+Pergunta 16
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.example.org/sapientia#>
+
+SELECT ?disciplinaNome WHERE {
+  ?disciplina a :Disciplina ;
+              :temNome ?disciplinaNome ;
+              :pertenceA ?tipo .
+  ?tipo :temNome "Ciências Exatas" .
+}
+
+
+Pergunta 17
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.example.org/sapientia#>
+
+SELECT ?nomeMestre WHERE {
+  ?m a :Mestre ;
+     :temNome ?nomeMestre ;
+     :temPeriodoHistorico ?ph .
+  ?ph :temNome "Século XIX" .
+}
+
+Pergunta 18
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.example.org/sapientia#>
+
+SELECT ?nomeAprendiz WHERE {
+  ?disciplina :temNome "Programação" .
+  ?aprendiz a :Aprendiz ;
+            :temNome ?nomeAprendiz ;
+            :aprende ?disciplina .
+}
+
+Pergunta 19
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.example.org/sapientia#>
+
+SELECT ?disciplinaNome (COUNT(?aprendiz) AS ?numAprendizes) WHERE {
+  ?aprendiz a :Aprendiz ;
+            :aprende ?disciplina .
+  ?disciplina :temNome ?disciplinaNome .
+}
+GROUP BY ?disciplinaNome
+ORDER BY DESC(?numAprendizes)
+
+Pergunta 20
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.example.org/sapientia#>
+
+SELECT ?periodoNome (COUNT(?conceito) AS ?numConceitos) WHERE {
+  ?conceito a :Conceito ;
+            :surgeEm ?periodo .
+  ?periodo :temNome ?periodoNome .
+}
+GROUP BY ?periodoNome
+ORDER BY DESC(?numConceitos)
+
+Pergunta 21
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.example.org/sapientia#>
+
+SELECT ?nomeConceito (GROUP_CONCAT(?tituloObra; separator=", ") AS ?obras) WHERE {
+  ?obra a :Obra ;
+        :temTitulo ?tituloObra ;
+        :explica ?conceito .
+  ?conceito :temNome ?nomeConceito .
+}
+GROUP BY ?nomeConceito
+
+Pergunta 22
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.example.org/sapientia#>
+
+SELECT ?disciplinaNome (GROUP_CONCAT(?aprendizNome; separator=", ") AS ?aprendizes) WHERE {
+  ?aprendiz a :Aprendiz ;
+            :temNome ?aprendizNome ;
+            :aprende ?disciplina .
+  ?disciplina :temNome ?disciplinaNome .
+}
+GROUP BY ?disciplinaNome
+
+Pergunta 23
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.example.org/sapientia#>
+
+SELECT ?faixa (COUNT(?a) AS ?numAprendizes) WHERE {
+  ?a a :Aprendiz ;
+     :temIdade ?idade .
+
+BIND (
+  IF(?idade >= 17 && ?idade <= 34, '[17-34]',
+  IF(?idade >= 35 && ?idade <= 44, '[35-44]',
+  IF(?idade >= 45 && ?idade <= 54, '[45-54]',
+  IF(?idade >= 55 && ?idade <= 64, '[55-64]',
+  IF(?idade >= 65 && ?idade <= 74, '[65-74]',
+  IF(?idade >= 75 && ?idade <= 100, '[75-100]', 'Outro')))))) AS ?faixa )
+
+}
+GROUP BY ?faixa
+ORDER BY ?faixa
+
+Pergunta 24
+
+Object Property adicionada no Portege e guardada na ontolgia
+
+Pergunta 25
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.example.org/sapientia#>
+
+CONSTRUCT {
+  ?aprendiz :estudaCom ?mestre .
+}
+WHERE {
+  ?aprendiz a :Aprendiz ;
+            :aprende ?disciplina .
+  ?mestre a :Mestre ;
+          :ensina ?disciplina .
+}
+
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.example.org/sapientia#>
+
+INSERT {
+  ?aprendiz :estudaCom ?mestre .
+}
+WHERE {
+  ?aprendiz a :Aprendiz ;
+            :aprende ?disciplina .
+  ?mestre a :Mestre ;
+          :ensina ?disciplina .
+}
+
+
+Pergunta 26
+
+Object Property adicionada no Portege e guardada na ontolgia
+
+Pergunta 27
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.example.org/sapientia#>
+
+CONSTRUCT {
+  ?disciplina :daBasesPara ?aplicacao .
+}
+WHERE {
+  ?conceito a :Conceito ;
+            :temAplicacaoEm ?aplicacao ;
+            :éEstudadoEm ?disciplina .
+}
+
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://www.example.org/sapientia#>
+
+INSERT {
+  ?disciplina :daBasesPara ?aplicacao .
+}
+WHERE {
+  ?conceito a :Conceito ;
+            :temAplicacaoEm ?aplicacao ;
+            :éEstudadoEm ?disciplina .
+}
+
