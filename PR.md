@@ -26,5 +26,5 @@ Para responder às últimas questões do enunciado, realizei os seguintes passos
 
 Após editar a ontologia com essas propriedades, voltei a importar a ontologia atualizada no ambiente SPARQL, garantindo que as novas relações estivessem disponíveis para a execução das queries CONSTRUCT e INSERT.
 
-Com isso, foi possível inferir novo conhecimento a partir das relações existentes, cumprindo os requisitos do exercício final.
+
 
